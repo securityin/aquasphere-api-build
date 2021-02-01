@@ -1,0 +1,182 @@
+{
+  "name": "@securityin/aquasphere-api",
+  "version": "0.1.0",
+  "description": "Promise and RxJS wrappers around the Polkadot JS RPC",
+  "main": "index.js",
+  "sideEffects": false,
+  "keywords": [
+    "Polkadot",
+    "RxJs"
+  ],
+  "author": "Jack",
+  "maintainers": [],
+  "contributors": [],
+  "license": "Apache-2.0",
+  "repository": "github:securityin/aquasphere-api",
+  "bugs": "https://github.com/securityin/aquasphere-api",
+  "homepage": "https://github.com/securityin/aquasphere-api",
+  "dependencies": {
+    "@babel/runtime": "^7.12.5",
+    "@polkadot/api-derive": "2.10.1",
+    "@polkadot/keyring": "^4.2.1",
+    "@polkadot/metadata": "2.10.1",
+    "@polkadot/rpc-core": "2.10.1",
+    "@polkadot/rpc-provider": "2.10.1",
+    "@polkadot/types": "2.10.1",
+    "@polkadot/types-known": "2.10.1",
+    "@polkadot/util": "^4.2.1",
+    "@polkadot/util-crypto": "^4.2.1",
+    "bn.js": "^4.11.9",
+    "eventemitter3": "^4.0.7",
+    "rxjs": "^6.6.3"
+  },
+  "exports": {
+    ".": {
+      "import": "./index.mjs",
+      "default": "./index.js"
+    },
+    "./augment": {
+      "import": "./augment/index.mjs",
+      "default": "./augment/index.js"
+    },
+    "./augment/consts": {
+      "import": "./augment/consts.mjs",
+      "default": "./augment/consts.js"
+    },
+    "./augment/query": {
+      "import": "./augment/query.mjs",
+      "default": "./augment/query.js"
+    },
+    "./augment/rpc": {
+      "import": "./augment/rpc.mjs",
+      "default": "./augment/rpc.js"
+    },
+    "./augment/tx": {
+      "import": "./augment/tx.mjs",
+      "default": "./augment/tx.js"
+    },
+    "./base": {
+      "import": "./base/index.mjs",
+      "default": "./base/index.js"
+    },
+    "./base/Decorate": {
+      "import": "./base/Decorate.mjs",
+      "default": "./base/Decorate.js"
+    },
+    "./base/Events": {
+      "import": "./base/Events.mjs",
+      "default": "./base/Events.js"
+    },
+    "./base/Getters": {
+      "import": "./base/Getters.mjs",
+      "default": "./base/Getters.js"
+    },
+    "./base/Init": {
+      "import": "./base/Init.mjs",
+      "default": "./base/Init.js"
+    },
+    "./base/types": {
+      "import": "./base/types.mjs",
+      "default": "./base/types.js"
+    },
+    "./checkTypes.manual": {
+      "import": "./checkTypes.manual.mjs",
+      "default": "./checkTypes.manual.js"
+    },
+    "./detectPackage": {
+      "import": "./detectPackage.mjs",
+      "default": "./detectPackage.js"
+    },
+    "./package-info.json": "./package-info.json",
+    "./package.json": "./package.json",
+    "./promise": {
+      "import": "./promise/index.mjs",
+      "default": "./promise/index.js"
+    },
+    "./promise/Combinator": {
+      "import": "./promise/Combinator.mjs",
+      "default": "./promise/Combinator.js"
+    },
+    "./promise/types": {
+      "import": "./promise/types.mjs",
+      "default": "./promise/types.js"
+    },
+    "./README.md": "./README.md",
+    "./rx": {
+      "import": "./rx/index.mjs",
+      "default": "./rx/index.js"
+    },
+    "./submittable": {
+      "import": "./submittable/index.mjs",
+      "default": "./submittable/index.js"
+    },
+    "./submittable/createClass": {
+      "import": "./submittable/createClass.mjs",
+      "default": "./submittable/createClass.js"
+    },
+    "./submittable/createSubmittable": {
+      "import": "./submittable/createSubmittable.mjs",
+      "default": "./submittable/createSubmittable.js"
+    },
+    "./submittable/Result": {
+      "import": "./submittable/Result.mjs",
+      "default": "./submittable/Result.js"
+    },
+    "./submittable/types": {
+      "import": "./submittable/types.mjs",
+      "default": "./submittable/types.js"
+    },
+    "./types": {
+      "import": "./types/index.mjs",
+      "default": "./types/index.js"
+    },
+    "./types/base": {
+      "import": "./types/base.mjs",
+      "default": "./types/base.js"
+    },
+    "./types/consts": {
+      "import": "./types/consts.mjs",
+      "default": "./types/consts.js"
+    },
+    "./types/rpc": {
+      "import": "./types/rpc.mjs",
+      "default": "./types/rpc.js"
+    },
+    "./types/storage": {
+      "import": "./types/storage.mjs",
+      "default": "./types/storage.js"
+    },
+    "./types/submittable": {
+      "import": "./types/submittable.mjs",
+      "default": "./types/submittable.js"
+    },
+    "./util": {
+      "import": "./util/index.mjs",
+      "default": "./util/index.js"
+    },
+    "./util/augmentObject": {
+      "import": "./util/augmentObject.mjs",
+      "default": "./util/augmentObject.js"
+    },
+    "./util/decorate": {
+      "import": "./util/decorate.mjs",
+      "default": "./util/decorate.js"
+    },
+    "./util/filterEvents": {
+      "import": "./util/filterEvents.mjs",
+      "default": "./util/filterEvents.js"
+    },
+    "./util/isKeyringPair": {
+      "import": "./util/isKeyringPair.mjs",
+      "default": "./util/isKeyringPair.js"
+    },
+    "./util/logging": {
+      "import": "./util/logging.mjs",
+      "default": "./util/logging.js"
+    },
+    "./util/validate": {
+      "import": "./util/validate.mjs",
+      "default": "./util/validate.js"
+    }
+  }
+}
