@@ -13,7 +13,7 @@ var _abi = require("./abi");
 
 var _promise = require("./promise");
 
-var _apiContract = require("@polkadot/api-contract/");
+var _apiContract = require("@polkadot/api-contract");
 
 var _keyring = _interopRequireDefault(require("@polkadot/keyring"));
 

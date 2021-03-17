@@ -6,7 +6,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 import { abi } from "./abi.mjs";
 import { ApiPromise } from "./promise/index.mjs";
-import { ContractPromise, Abi } from '@polkadot/api-contract/';
+import { ContractPromise, Abi } from '@polkadot/api-contract';
 import Keyring from '@polkadot/keyring';
 import { WsProvider } from '@polkadot/rpc-provider';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
