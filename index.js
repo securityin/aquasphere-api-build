@@ -33,6 +33,12 @@ Object.defineProperty(exports, "SubmittableResult", {
     return _submittable.SubmittableResult;
   }
 });
+Object.defineProperty(exports, "Api", {
+  enumerable: true,
+  get: function () {
+    return _api.Api;
+  }
+});
 
 require("./detectPackage");
 
@@ -45,3 +51,5 @@ var _promise = require("./promise");
 var _rx = require("./rx");
 
 var _submittable = require("./submittable");
+
+var _api = require("./api");

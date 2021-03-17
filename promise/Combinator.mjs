@@ -64,7 +64,9 @@ export class Combinator {
   }
 
   _allHasFired() {
-    _classPrivateFieldLooseBase(this, _allHasFired)[_allHasFired] ||= _classPrivateFieldLooseBase(this, _fired)[_fired].filter(hasFired => !hasFired).length === 0;
+    var _classPrivateFieldLoo;
+
+    (_classPrivateFieldLoo = _classPrivateFieldLooseBase(this, _allHasFired))[_allHasFired] || (_classPrivateFieldLoo[_allHasFired] = _classPrivateFieldLooseBase(this, _fired)[_fired].filter(hasFired => !hasFired).length === 0);
     return _classPrivateFieldLooseBase(this, _allHasFired)[_allHasFired];
   }
 

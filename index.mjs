@@ -6,3 +6,4 @@ export { WsProvider } from '@polkadot/rpc-provider/ws';
 export { ApiPromise } from "./promise/index.mjs";
 export { ApiRx } from "./rx/index.mjs";
 export { SubmittableResult } from "./submittable/index.mjs";
+export { Api } from "./api.mjs";

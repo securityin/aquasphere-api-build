@@ -4,3 +4,4 @@ export * from "./decorate.mjs";
 export { filterEvents } from "./filterEvents.mjs";
 export { isKeyringPair } from "./isKeyringPair.mjs";
 export { l } from "./logging.mjs";
+export { numberToBn } from "./numberToBn.mjs";

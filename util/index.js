@@ -6,7 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 var _exportNames = {
   filterEvents: true,
   isKeyringPair: true,
-  l: true
+  l: true,
+  numberToBn: true
 };
 Object.defineProperty(exports, "filterEvents", {
   enumerable: true,
@@ -24,6 +25,12 @@ Object.defineProperty(exports, "l", {
   enumerable: true,
   get: function () {
     return _logging.l;
+  }
+});
+Object.defineProperty(exports, "numberToBn", {
+  enumerable: true,
+  get: function () {
+    return _numberToBn.numberToBn;
   }
 });
 
@@ -46,3 +53,5 @@ var _filterEvents = require("./filterEvents");
 var _isKeyringPair = require("./isKeyringPair");
 
 var _logging = require("./logging");
+
+var _numberToBn = require("./numberToBn");

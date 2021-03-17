@@ -1,6 +1,6 @@
 {
-  "name": "@securityin/aquasphere-api",
-  "version": "0.1.0",
+  "name": "@polkadot/aquasphere-api",
+  "version": "1.0.1",
   "description": "Promise and RxJS wrappers around the Polkadot JS RPC",
   "main": "index.js",
   "sideEffects": false,
@@ -18,6 +18,7 @@
   "dependencies": {
     "@babel/runtime": "^7.12.5",
     "@polkadot/api-derive": "2.10.1",
+    "@polkadot/api-contract": "4.1.1",
     "@polkadot/keyring": "^4.2.1",
     "@polkadot/metadata": "2.10.1",
     "@polkadot/rpc-core": "2.10.1",
@@ -34,6 +35,14 @@
     ".": {
       "import": "./index.mjs",
       "default": "./index.js"
+    },
+    "./abi": {
+      "import": "./abi.mjs",
+      "default": "./abi.js"
+    },
+    "./api": {
+      "import": "./api.mjs",
+      "default": "./api.js"
     },
     "./augment": {
       "import": "./augment/index.mjs",
@@ -87,7 +96,6 @@
       "import": "./detectPackage.mjs",
       "default": "./detectPackage.js"
     },
-    "./package-info.json": "./package-info.json",
     "./package.json": "./package.json",
     "./promise": {
       "import": "./promise/index.mjs",
@@ -101,7 +109,6 @@
       "import": "./promise/types.mjs",
       "default": "./promise/types.js"
     },
-    "./README.md": "./README.md",
     "./rx": {
       "import": "./rx/index.mjs",
       "default": "./rx/index.js"
@@ -173,6 +180,10 @@
     "./util/logging": {
       "import": "./util/logging.mjs",
       "default": "./util/logging.js"
+    },
+    "./util/numberToBn": {
+      "import": "./util/numberToBn.mjs",
+      "default": "./util/numberToBn.js"
     },
     "./util/validate": {
       "import": "./util/validate.mjs",
