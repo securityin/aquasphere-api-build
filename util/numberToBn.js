@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.numberToBn = numberToBn;
+exports.toNumber = toNumber;
 
 var _util = require("@polkadot/util");
 
@@ -19,7 +20,12 @@ function numberToBn(num, decimals) {
 
   if (isDecimalValue) {
     const div = new _bn.default(input.replace(/\.\d*$/, ''));
-    const modString = input.replace(/^\d+\./, '').substr(0, decimals);
+    const modString = input.replace(/^\d+\./, '');
+
+    if (modString.length > decimals) {
+      throw 'The decimal part is too long';
+    }
+
     const mod = new _bn.default(modString);
     result = div.mul(_util.BN_TEN.pow(bnDecimals)).add(mod.mul(_util.BN_TEN.pow(new _bn.default(decimals - modString.length))));
   } else {
@@ -27,4 +33,16 @@ function numberToBn(num, decimals) {
   }
 
   return result;
+}
+
+const zero = '00000000000000000000000000000000000000000';
+
+function toNumber(num, decimals) {
+  const l = num.length;
+
+  if (l <= decimals) {
+    return new Number(`0.${zero.substr(0, decimals - l)}${num}`);
+  } else {
+    return new Number(`${num.substr(decimals)}.${num.substr(l - decimals, l)}`);
+  }
 }

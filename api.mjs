@@ -1,9 +1,3 @@
-import _defineProperty from "@babel/runtime/helpers/esm/defineProperty";
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
 import { abi } from "./abi.mjs";
 import { ApiPromise } from "./promise/index.mjs";
 import { ContractPromise, Abi } from '@polkadot/api-contract';
@@ -12,13 +6,39 @@ import { WsProvider } from '@polkadot/rpc-provider';
 import { mnemonicGenerate } from '@polkadot/util-crypto';
 import { numberToBn } from "./util/index.mjs";
 import { find } from 'rxjs/operators';
+import https from 'https';
+import { toNumber } from "./util/numberToBn.mjs";
 
 function get(path) {
-  const base = 'https://explorer.aquasphere.io/api/v1'; // const base =  'https://explorer.aquasphere.io/api/v1'
+  const options = {
+    "method": "GET",
+    "hostname": "explorer.aquasphere.io",
+    "port": null,
+    "path": `/api/v1${path}`,
+    "headers": {
+      "cache-control": "no-cache"
+    }
+  };
+  return new Promise((resolve, reject) => {
+    https.get(options, res => {
+      console.info(path, res.statusCode);
 
-  return fetch(`${base}${path}`, {
-    method: 'get'
-  }).then(res => res.json()).then(JSON.parse);
+      if (res.statusCode === 200) {
+        var chunks = [];
+        res.on("data", function (chunk) {
+          chunks.push(chunk);
+        });
+        res.on("end", function () {
+          var body = Buffer.concat(chunks);
+          resolve(JSON.parse(body.toString()));
+        });
+      } else {
+        reject(`${res.statusCode}`);
+      }
+    }).on('error', error => {
+      reject(error);
+    });
+  });
 }
 /**
  * getContractInfo
@@ -26,8 +46,8 @@ function get(path) {
 
 
 function getContractInfo(contractAdd) {
-  let symbol = 'ENT';
-  let decimals = 6;
+  let symbol = 'AQUA';
+  let decimals = 15;
   return get(`/contract/instance/${contractAdd}`).then(data => {
     symbol = data.data.attributes.symbol;
     decimals = data.data.attributes.decimals;
@@ -39,17 +59,12 @@ function getContractInfo(contractAdd) {
       decimals,
       abi: data.data.attributes.abi
     };
-  }).catch(e => {
-    return {
-      symbol: 'ENT',
-      decimals: 6,
-      abi
-    };
   });
 }
 
 class Api {
   constructor(api) {
+    this.ws_url = '';
     this.mKeyring = void 0;
     this.mApi = void 0;
     this.mContractApiMap = {};
@@ -65,17 +80,31 @@ class Api {
       if (this.mContractApiMap[contractAdd]) {
         resolve(this.mContractApiMap[contractAdd]);
       } else {
-        getContractInfo(contractAdd).then(info => {
-          const abi = new Abi(info.abi, this.mApi.registry.getChainProperties());
-          const contract = new ContractPromise(this.mApi, abi, contractAdd);
-          this.mContractApiMap[contractAdd] = {
-            contract,
-            decimals: info.decimals,
-            symbol: info.symbol,
-            abi
-          };
-          resolve(this.mContractApiMap[contractAdd]);
-        }).catch(reject);
+        let getContract = getContractInfo(contractAdd);
+
+        if (this.ws_url === 'wss://rpc-test.aquasphere.io') {
+          getContract = getContract.catch(() => ({
+            abi,
+            decimals: 6,
+            symbol: 'ENT'
+          }));
+        } else {
+          getContract = getContract.catch(reject);
+        }
+
+        getContract.then(info => {
+          if (info) {
+            const abi = new Abi(info.abi, this.mApi.registry.getChainProperties());
+            const contract = new ContractPromise(this.mApi, abi, contractAdd);
+            this.mContractApiMap[contractAdd] = {
+              contract,
+              decimals: info.decimals,
+              symbol: info.symbol,
+              abi
+            };
+            resolve(this.mContractApiMap[contractAdd]);
+          }
+        });
       }
     });
   }
@@ -92,7 +121,9 @@ class Api {
       provider,
       types
     }).then(api => {
-      return new Api(api);
+      const mApi = new Api(api);
+      mApi.ws_url = ws_url;
+      return mApi;
     });
   }
   /**
@@ -148,24 +179,39 @@ class Api {
           status
         } = result;
 
-        if (status.isInBlock || status.isFinalized) {
-          let mStatus = status.isInBlock ? 'inBlock' : 'isFinalized';
-          const block_hash = status.isInBlock ? status.asInBlock.toString() : status.asFinalized.toString();
+        if (status.isFinalized) {
+          let mStatus = 'success';
+          const block_hash = status.asFinalized.toString();
           const de = this.decodeEvents(events, contractApi);
 
           if (de) {
+            let msg,
+                from,
+                to,
+                value = undefined;
             const r = result;
 
             if (de.msg.includes('ExtrinsicFailed') || r.contractEvents && find(r.contractEvents, item => item.event.identifier.includes('Failed'))) {
               mStatus = 'error';
+              msg = de.msg;
+            } else {
+              de.msg.forEach((item, index) => {
+                if (index === 0) from = item;
+                if (index === 1) to = item;
+                if (index === 2) value = toNumber(item, contractApi.decimals);
+              });
             }
 
-            call(_objectSpread(_objectSpread({}, de), {}, {
+            call({
+              key: `${block_hash}:${de.event_index}`,
               status: mStatus,
-              block_hash
-            }));
+              msg,
+              from,
+              to,
+              value
+            });
           }
-        } else if (!status.isReady && !status.isBroadcast) {
+        } else if (!status.isReady && !status.isBroadcast && !status.isInBlock) {
           console.info('other status::', status.toString());
           call({
             msg: [''],
@@ -173,7 +219,10 @@ class Api {
           });
         }
       });
-    });
+    }).catch(e => call({
+      msg: e,
+      status: 'error'
+    }));
   }
 
   decodeEvents(events, contractApi) {
@@ -207,10 +256,11 @@ class Api {
    */
 
 
-  queryContractTransation(contract, block_hash, block_index, call) {
+  queryContractTransation(contract, key, call) {
     this.initContract(contract).then(contractApi => {
-      this.mApi.query.system.events.at(block_hash).then(events => {
-        const event = (events || []).find(e => e && e.event && e.event.index && e.event.index.toString() === block_index);
+      const bi = key.split(':');
+      this.mApi.query.system.events.at(bi[0]).then(events => {
+        const event = (events || []).find(e => e && e.event && e.event.index && e.event.index.toString() === bi[1]);
 
         if (event) {
           const {
@@ -220,17 +270,34 @@ class Api {
           } = event.event;
 
           if (section === 'contracts' && method === 'ContractExecution') {
-            const msg = contractApi.abi.decodeEvent(data[1]);
-            const args = msg.args.map(item => item.toString());
-            const status = msg.event.identifier.includes('Failed') ? 'error' : 'isFinalized';
+            const deEvent = contractApi.abi.decodeEvent(data[1]);
+            const args = deEvent.args.map(item => item.toString());
+            const isFailed = deEvent.event.identifier.includes('Failed');
+            const status = isFailed ? 'error' : 'success';
+            let from,
+                to,
+                value,
+                msg = undefined;
+
+            if (isFailed) {
+              msg = args;
+            } else {
+              args.forEach((item, index) => {
+                if (index === 0) from = item;
+                if (index === 1) to = item;
+                if (index === 2) value = toNumber(item, contractApi.decimals);
+              });
+            }
+
             call({
-              event_index: block_index,
-              msg: args,
-              status
+              msg,
+              status,
+              from,
+              to,
+              value
             });
           } else if (section === 'system' && method === 'ExtrinsicFailed') {
             call({
-              event_index: block_index,
               msg: ['ExtrinsicFailed'],
               status: 'error'
             });
@@ -241,7 +308,10 @@ class Api {
           call(null);
         }
       });
-    });
+    }).catch(e => call({
+      msg: e,
+      status: 'error'
+    }));
   }
 
 }
