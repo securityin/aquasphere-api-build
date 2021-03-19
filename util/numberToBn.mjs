@@ -27,8 +27,8 @@ export function toNumber(num, decimals) {
   const l = num.length;
 
   if (l <= decimals) {
-    return new Number(`0.${zero.substr(0, decimals - l)}${num}`);
+    return Number(`0.${zero.substr(0, decimals - l)}${num}`);
   } else {
-    return new Number(`${num.substr(decimals)}.${num.substr(l - decimals, l)}`);
+    return Number(`${num.substr(0, l - decimals)}.${num.substr(l - decimals, l)}`);
   }
 }
