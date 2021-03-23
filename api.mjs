@@ -33,13 +33,13 @@ class Api {
   // private symbol = 'ENT'
   // private mContractApiMap: { [key: string]: ContractApi } = {}
   constructor(api) {
-    this.ws_url = '';
+    this.ws_url = 'wss://rpc.aquasphere.io';
     this.mKeyring = void 0;
     this.mApi = void 0;
     this.mAbi = void 0;
     this.mContract = void 0;
     this.decimals = 6;
-    this.contractAdd = '5HpxFxLc8pperGjJvNE2aL2LYk6iWTLZf7afTxe2DvmraXJ2';
+    this.contractAdd = '5DFe3DwnuH8B8bNuZyeSJFKDM67fmf7T74qmLqwHzXnqTp46';
     this.mKeyring = new Keyring({
       ss58Format: 2,
       type: 'sr25519'

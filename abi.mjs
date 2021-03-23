@@ -1,13 +1,13 @@
 export const abi = {
   "metadataVersion": "0.1.0",
   "source": {
-    "hash": "0xb0004b735b2660f239f69a7128e527c120a849366443856335d30b1dc5f56d9e",
+    "hash": "0x2a03c7a3accb9c383f23632e6e694954edfda33f1c05e5cc21e1d3bc6fb2c3e3",
     "language": "ink! 3.0.0-rc3",
     "compiler": "rustc 1.48.0-nightly"
   },
   "contract": {
     "name": "entropy",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "authors": ["Gavin Fu <gavfu@outlook.com>"]
   },
   "spec": {
@@ -406,7 +406,7 @@ export const abi = {
           "type": 3
         }
       }],
-      "docs": [" Transfers `value` amount of tokens from the caller's account to account `to`.", "", " On success a `Transfer` event is emitted.", "", " # Errors", "", " Returns `InsufficientBalance` error if there are not enough tokens on", " the caller's account balance."],
+      "docs": [" Transfers `value` amount of tokens from the caller's account to account `to`.", "", " On success a `Transfer` event is emitted.", "", " # Errors", "", "  Returns `AccountBlackListed` error if the caller's account is blacklisted.", " ", " Returns `InsufficientBalance` error if there are not enough tokens on", " the caller's account balance.", " "],
       "mutates": true,
       "name": ["transfer"],
       "payable": false,
@@ -458,7 +458,7 @@ export const abi = {
           "type": 3
         }
       }],
-      "docs": [" Transfers `value` tokens on the behalf of `from` to the account `to`.", "", " This can be used to allow a contract to transfer tokens on ones behalf and/or", " to charge fees in sub-currencies, for example.", "", " On success a `Transfer` event is emitted.", "", " # Errors", "", " Returns `InsufficientAllowance` error if there are not enough tokens allowed", " for the caller to withdraw from `from`.", "", " Returns `InsufficientBalance` error if there are not enough tokens on", " the the account balance of `from`."],
+      "docs": [" Transfers `value` tokens on the behalf of `from` to the account `to`.", "", " This can be used to allow a contract to transfer tokens on ones behalf and/or", " to charge fees in sub-currencies, for example.", "", " On success a `Transfer` event is emitted.", "", " # Errors", "", " Returns `AccountBlackListed` error if the `from` account is blacklisted.", " ", " Returns `InsufficientAllowance` error if there are not enough tokens allowed", " for the caller to withdraw from `from`.", "", " Returns `InsufficientBalance` error if there are not enough tokens on", " the the account balance of `from`."],
       "mutates": true,
       "name": ["transfer_from"],
       "payable": false,
@@ -1137,6 +1137,9 @@ export const abi = {
           "name": "InsufficientAllowance"
         }, {
           "discriminant": 3,
+          "name": "AccountBlackListed"
+        }, {
+          "discriminant": 4,
           "name": "AccountNotBlackListed"
         }]
       }
