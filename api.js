@@ -49,18 +49,21 @@ class ContractExtrisic {
 class Api {
   // private symbol = 'ENT'
   // private mContractApiMap: { [key: string]: ContractApi } = {}
-  constructor(api) {
-    this.ws_url = 'wss://rpc.aquasphere.io';
+  constructor(api, ws_url) {
+    this.ws_url = void 0;
     this.mKeyring = void 0;
     this.mApi = void 0;
     this.mAbi = void 0;
     this.mContract = void 0;
     this.decimals = 6;
     this.contractAdd = '5DFe3DwnuH8B8bNuZyeSJFKDM67fmf7T74qmLqwHzXnqTp46';
+    this.tokenDecimals = 15;
+    this.tokenSymbol = "AQUA";
     this.mKeyring = new _keyring.default({
       ss58Format: 2,
       type: 'sr25519'
     });
+    this.ws_url = ws_url;
     this.mApi = api;
     this.mAbi = new _apiContract.Abi(_abi.abi, api.registry.getChainProperties());
     this.mContract = new _apiContract.ContractPromise(api, _abi.abi, this.contractAdd);
@@ -88,7 +91,7 @@ class Api {
   // }
 
 
-  static create(ws_url) {
+  static create(ws_url = 'wss://rpc.aquasphere.io') {
     const provider = new _rpcProvider.WsProvider(ws_url);
     const types = {
       Address: 'AccountId',
@@ -100,8 +103,17 @@ class Api {
       provider,
       types
     }).then(api => {
-      const mApi = new Api(api);
-      mApi.ws_url = ws_url;
+      return api.rpc.system.properties().then(properties => ({
+        properties,
+        api
+      }));
+    }).then(({
+      api,
+      properties
+    }) => {
+      const mApi = new Api(api, ws_url);
+      mApi.tokenDecimals = Number(properties.tokenDecimals.toString());
+      mApi.tokenSymbol = properties.tokenSymbol.toString();
       return mApi;
     });
   }
@@ -322,6 +334,24 @@ class Api {
         call(null);
       }
     });
+  } // get balance of ENT
+
+
+  getEntBalance(address, call) {
+    this.mContract.query.balanceOf(address, {
+      value: 0,
+      gasLimit: -1
+    }, address).then(res => {
+      const value = res.output.toString();
+      call((0, _numberToBn.toNumber)(value, this.decimals));
+    }).catch(e => call(null, e));
+  } // get balance of AQUA
+
+
+  getBalance(address, call) {
+    this.mApi.query.system.account(address).then(res => {
+      call((0, _numberToBn.toNumber)(res.data.free.toString(), this.tokenDecimals));
+    }).catch(e => call(null, e));
   }
 
 }
