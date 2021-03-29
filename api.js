@@ -60,7 +60,6 @@ class Api {
     this.tokenDecimals = 15;
     this.tokenSymbol = "AQUA";
     this.mKeyring = new _keyring.default({
-      ss58Format: 2,
       type: 'sr25519'
     });
     this.ws_url = ws_url;
