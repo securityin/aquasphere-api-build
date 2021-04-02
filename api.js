@@ -218,6 +218,57 @@ class Api {
     });
   }
 
+  transfer(from, to, amount, call) {
+    if (amount <= 0) {
+      call({
+        msg: ['amount error'],
+        status: 'error'
+      });
+      return;
+    }
+
+    this.mApi.tx.balances.transfer(to, (0, _util.numberToBn)(amount, this.tokenDecimals)).signAndSend(from, ({
+      events,
+      status
+    }) => {
+      if (status.isFinalized) {
+        const block_hash = status.asFinalized.toString();
+        let fromAdd = from.address;
+        let msg = undefined;
+
+        for (const e of events) {
+          console.log('e:::', `${e.event.section}-${e.event.method}-${e.event.index.toString()}`);
+        }
+
+        const e = events.find(e => e.event.section === 'system' && e.event.method.startsWith('Extrinsic'));
+
+        if (e) {
+          let mStatus = e.event.method === 'ExtrinsicSuccess' ? 'success' : 'error';
+          let index = e.event.index.toString();
+          call({
+            key: `${block_hash}:${index}`,
+            status: mStatus,
+            msg,
+            from: fromAdd,
+            to,
+            value: amount
+          });
+        } else {
+          call({
+            msg: ['no event'],
+            status: 'error'
+          });
+        }
+      } else if (!status.isReady && !status.isBroadcast && !status.isInBlock) {
+        console.info('other status::', status.toString());
+        call({
+          msg: [status.toString()],
+          status: 'error'
+        });
+      }
+    });
+  }
+
   decodeEvents(events) {
     for (const e of events) {
       const {
