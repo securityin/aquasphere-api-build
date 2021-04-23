@@ -56,7 +56,7 @@ class Api {
     this.mAbi = void 0;
     this.mContract = void 0;
     this.decimals = 6;
-    this.contractAdd = '5DFe3DwnuH8B8bNuZyeSJFKDM67fmf7T74qmLqwHzXnqTp46';
+    this.contractAdd = '5HQbAzQQu4DxvBeJrEQiGjiEwdEGWoeFsgqLJdWQgYYGUNrB';
     this.tokenDecimals = 15;
     this.tokenSymbol = "AQUA";
     this.mKeyring = new _keyring.default({
