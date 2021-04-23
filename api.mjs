@@ -144,7 +144,7 @@ class Api {
    */
 
 
-  transferEnt(from, to, amount, call) {
+  transferEnt(from, to, amount, extra, call) {
     if (amount <= 0) {
       call({
         msg: ['amount error'],
@@ -153,7 +153,7 @@ class Api {
       return;
     }
 
-    this.mContract.tx.transfer(0, -1, to, numberToBn(amount, this.decimals)).signAndSend(from, result => {
+    this.mContract.tx.transfer(0, -1, to, numberToBn(amount, this.decimals), extra).signAndSend(from, result => {
       const {
         events,
         status
@@ -168,7 +168,8 @@ class Api {
           let msg,
               from,
               to,
-              value = undefined;
+              value,
+              extra = undefined;
           const r = result;
 
           if (de.msg.includes('ExtrinsicFailed') || r.contractEvents && find(r.contractEvents, item => item.event.identifier.includes('Failed'))) {
@@ -179,6 +180,7 @@ class Api {
               if (index === 0) from = item;
               if (index === 1) to = item;
               if (index === 2) value = toNumber(item, this.decimals);
+              if (index === 3) extra = item;
             });
           }
 
@@ -188,7 +190,8 @@ class Api {
             msg,
             from,
             to,
-            value
+            value,
+            extra
           });
         }
       } else if (!status.isReady && !status.isBroadcast && !status.isInBlock) {
@@ -334,7 +337,8 @@ class Api {
       const [extrinsics, event] = data;
       let from,
           to,
-          value = undefined;
+          value,
+          extra = undefined;
       console.info("index:::", event.event.index.toHuman());
 
       if (event.contract_event) {
@@ -343,9 +347,12 @@ class Api {
         const ex = extrinsics.pop();
 
         if (ex) {
+          var _ex$contract_message$;
+
           from = ex.extrinsic.signer.toString();
           to = ex.contract_message.args[0].toString();
           value = toNumber(ex.contract_message.args[1].toString(), this.decimals);
+          extra = (_ex$contract_message$ = ex.contract_message.args[2]) === null || _ex$contract_message$ === void 0 ? void 0 : _ex$contract_message$.toString();
         }
 
         const isFailed = event.contract_event.event.identifier.includes('Failed');
@@ -353,7 +360,8 @@ class Api {
           status: isFailed ? 'error' : 'success',
           from,
           to,
-          value
+          value,
+          extra
         });
       } else if (event.event.section === 'system' && event.event.method === 'ExtrinsicFailed') {
         call({
