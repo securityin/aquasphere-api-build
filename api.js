@@ -185,8 +185,7 @@ class Api {
           let msg,
               from,
               to,
-              value,
-              extra = undefined;
+              value = undefined;
           const r = result;
 
           if (de.msg.includes('ExtrinsicFailed') || r.contractEvents && (0, _operators.find)(r.contractEvents, item => item.event.identifier.includes('Failed'))) {
@@ -197,7 +196,6 @@ class Api {
               if (index === 0) from = item;
               if (index === 1) to = item;
               if (index === 2) value = (0, _numberToBn.toNumber)(item, this.decimals);
-              if (index === 3) extra = item;
             });
           }
 
@@ -283,7 +281,8 @@ class Api {
       console.log('events--', data.toString(), section, method, index.toString());
 
       if (section === 'contracts' && method === 'ContractExecution') {
-        const args = this.mAbi.decodeEvent(data[1]).args.map(item => item.toString());
+        const decodeEvent = this.mAbi.decodeEvent(data[1]);
+        const args = decodeEvent.args.map(item => item.toString());
         return {
           event_index: index.toString(),
           msg: args
